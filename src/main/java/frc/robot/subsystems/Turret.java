@@ -1,3 +1,5 @@
+//TODO fix naming for PID method and add odometry theta calculations with distance formula
+//TODO add feedforward to turret and figure out how to use it with PID
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
@@ -76,7 +78,7 @@ public class Turret extends SubsystemBase{
     }
 
     public void rotateToPosition(){
-        //todo use PIDS to rotate to a certain angle
+        //todo use PIDS to rotate to a certain angle based on pose calculation and theta
     }
 
     public static Turret getInstance() {
