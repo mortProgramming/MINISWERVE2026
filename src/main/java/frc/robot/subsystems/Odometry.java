@@ -24,8 +24,11 @@ public class Odometry extends SubsystemBase{
     private CommandSwerveDrivetrain drivetrain;
     
     private Pose2d robotPose;
-
+    private Translation2d robotTranslation; //this translation is for calculating the distan
+    private double xComponentOfTranslation;
     private Field2d field;
+
+    private double distance;
 
     public Odometry(){
         
@@ -39,16 +42,27 @@ public class Odometry extends SubsystemBase{
         
         robotState = drivetrain.getState();
         this.robotPose = robotState.Pose;
-
+        this.robotTranslation = robotState.Pose.getTranslation();      
         SmartDashboard.putData("Field",field);
+        SmartDashboard.putNumber("Robot X pos",robotState.Pose.getX());
+        SmartDashboard.putNumber("Robot Y Pos",robotState.Pose.getY());
         field.setRobotPose(robotPose);
-
 
     }
     
     public void updatePoseLimelight(){
         drivetrain.addVisionMeasurement(vision.getRobotPosition(), 0); 
     }
+
+    public double getHypToHub(){
+        robotTranslation = robotState.Pose.getTranslation();
+        return robotTranslation.getDistance(fakeHub);
+    }
+
+    // public double getXDistanceHub(){
+    //      xComponentOfTranslation = robotState.Pose.getTranslation().getX();
+    //      return xComponentOfTranslation make this do just x component of robot to the hub
+    // }
     
 
 }   
