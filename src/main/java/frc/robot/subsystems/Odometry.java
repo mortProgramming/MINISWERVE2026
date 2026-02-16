@@ -29,30 +29,42 @@ public class Odometry extends SubsystemBase{
     private Field2d field;
 
     private double distance;
+    public double latency = LimelightHelpers.getLatency_Pipeline("") + LimelightHelpers.getLatency_Capture("");
+    
+               
+
 
     public Odometry(){
-        
-         
         field = new Field2d();
-    }
-
-
-    @Override 
-    public void periodic(){
         
-        robotState = drivetrain.getState();
-        this.robotPose = robotState.Pose;
-        this.robotTranslation = robotState.Pose.getTranslation();      
-        SmartDashboard.putData("Field",field);
-        SmartDashboard.putNumber("Robot X pos",robotState.Pose.getX());
-        SmartDashboard.putNumber("Robot Y Pos",robotState.Pose.getY());
-        field.setRobotPose(robotPose);
+    }
 
+
+    @Override
+    public void periodic(){
+    robotState = drivetrain.getState();
+    robotPose = robotState.Pose;
+
+    if (vision.hasTag()) {
+        Pose2d visionPose = vision.getRobotPosition();
+
+        double timestamp = edu.wpi.first.wpilibj.Timer.getFPGATimestamp()
+        - (latency / 1000.0);
+
+        drivetrain.addVisionMeasurement(visionPose, timestamp);
+
+        SmartDashboard.putNumber("Vision X", visionPose.getX());
+        SmartDashboard.putNumber("Vision Y", visionPose.getY());
     }
+
+    SmartDashboard.putNumber("Robot X pos", robotPose.getX());
+    SmartDashboard.putNumber("Robot Y Pos", robotPose.getY());
+    }
+
     
-    public void updatePoseLimelight(){
-        drivetrain.addVisionMeasurement(vision.getRobotPosition(), 0); 
-    }
+    // public void updatePoseLimelight(){
+    //     drivetrain.addVisionMeasurement(vision.getRobotPosition(), 0); 
+    // }
 
     public double getHypToHub(){
         robotTranslation = robotState.Pose.getTranslation();

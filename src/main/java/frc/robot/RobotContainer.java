@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.SpinTurret;
 import frc.robot.configs.constants.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -74,6 +75,9 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        joystick.a().onTrue(new SpinTurret(0.5));
+        joystick.b().onTrue(new SpinTurret(-0.5));
     }
 
     public Command getAutonomousCommand() {

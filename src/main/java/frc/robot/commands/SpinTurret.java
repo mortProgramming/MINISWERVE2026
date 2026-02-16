@@ -16,10 +16,13 @@ public class SpinTurret extends Command{
     }
     
     @Override
-    public void initialize(){}
+    public void initialize(){
+    }
     
     @Override
-    public void execute(){}
+    public void execute(){
+        turret.rotateTurret(speed);
+    }
 
     @Override 
     public void end(boolean interrupted){}
