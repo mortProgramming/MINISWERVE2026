@@ -1,4 +1,6 @@
 package frc.robot.configs.constants;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.math.util.Units;
 
 public class PhysicalConstants {
@@ -22,15 +24,16 @@ public class PhysicalConstants {
 		public static final int IMU_TO_ROBOT_FRONT_ANGLE = 270;
 
 		public static final double WHEEL_COEFFICIENT_OF_FRICTION = 1;
-		public static final double ROBOT_MASS = 16.6;
+		public static final double ROBOT_MASS = 26.6;
 		public static final double ROBOT_MOMENT_OF_INERTIA = ROBOT_MASS * 0.254 * 0.254 / 2;
 		public static final double DRIVE_MOTOR_CURRENT_LIMIT = 60;
 		public static final double DRIVE_MOTOR_MAX_RPM = 6000;
 
 		public static final double DRIVE_REDUCTION = (16.0 / 50.0) * (28.0 / 16.0) * (15.0 / 45.0);
-		public static final double WHEEL_DIAMETER = 0.1014;  //0.1014
+		public static final double WHEEL_DIAMETER = Units.inchesToMeters(4);  //0.1014
 		public static final double ROTATIONS_TO_METERS = WHEEL_DIAMETER * Math.PI;
-		public static final double MAX_SPEED = DRIVE_REDUCTION * ROTATIONS_TO_METERS * (DRIVE_MOTOR_MAX_RPM / 60);
+		// public static final double MAX_SPEED = DRIVE_REDUCTION * ROTATIONS_TO_METERS * (DRIVE_MOTOR_MAX_RPM / 60);
+		public static final double MAX_SPEED = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
 
 		public static final double ODOMETRY_MULTIPLIER = 5.67;
     }

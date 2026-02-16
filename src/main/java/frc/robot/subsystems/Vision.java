@@ -27,7 +27,7 @@ public class Vision extends SubsystemBase {
 
     public Vision() {
         fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
-        // cameraTable = NetworkTableInstance.getDefault().getTable(FRONT_CAMERA_NAME);      
+        cameraTable = NetworkTableInstance.getDefault().getTable("limelight-front");      
         llTable = NetworkTableInstance.getDefault().getTable("limelight");
     }
 

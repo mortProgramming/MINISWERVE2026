@@ -13,11 +13,11 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-// import com.pathplanner.lib.auto.AutoBuilder;
-// import com.pathplanner.lib.config.ModuleConfig;
-// import com.pathplanner.lib.config.PIDConstants;
-// import com.pathplanner.lib.config.RobotConfig;
-// import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
@@ -372,44 +372,44 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return this.getState().Speeds;
     }
     
-    // public void configureAutoBuilder(){
-    //     AutoBuilder.configure(
-    //         () -> drivetrain.getPose(), // Robot pose supplier
-    //         (Pose2d pose) -> drivetrain.resetPose(pose), // Method to reset odometry (will be called if your auto has a starting pose)
-    //         () -> drivetrain.getRobotRelativeSpeeds(), // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-    //         (ChassisSpeeds speeds) -> driveRelativeAutobuilder(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-    //         new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-    //                 new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants (these are not known rn because robot isnt working?)
-    //                 new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-    //         ),
-    //         new RobotConfig( //all of these are wrong fix them 
-    //             ROBOT_MASS,
-    //             ROBOT_MOMENT_OF_INERTIA,
-    //             new ModuleConfig(
-    //                 WHEEL_DIAMETER / 2,
-    //                 MAX_SPEED,
-    //                 WHEEL_COEFFICIENT_OF_FRICTION,
-    //                 // DCMotor.getKrakenX60(1).withReduction(5.472),
-    //                 DCMotor.getKrakenX60(1).withReduction(1 / DRIVE_REDUCTION),
-    //                 DRIVE_MOTOR_CURRENT_LIMIT,
-    //                 1
-    //             ),
-    //             DRIVETRAIN_WHEELBASE_METERS
-    //         ), // The robot configuration
-    //         () -> {
-    //           // Boolean supplier that controls when the path will be mirrored for the red alliance
-    //           // This will flip the path being followed to the red side of the field.
-    //           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+    public void configureAutoBuilder(){
+        AutoBuilder.configure(
+            () -> drivetrain.getPose(), // Robot pose supplier
+            (Pose2d pose) -> drivetrain.resetPose(pose), // Method to reset odometry (will be called if your auto has a starting pose)
+            () -> drivetrain.getRobotRelativeSpeeds(), // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (ChassisSpeeds speeds) -> driveRelativeAutobuilder(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(0.1, 0.0, 0.0), // Translation PID constants (these are not known rn because robot isnt working?)
+                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            ),
+            new RobotConfig( 
+                ROBOT_MASS,
+                ROBOT_MOMENT_OF_INERTIA,
+                new ModuleConfig(
+                    WHEEL_DIAMETER / 2,
+                    MAX_SPEED,
+                    WHEEL_COEFFICIENT_OF_FRICTION,
+                    // DCMotor.getKrakenX60(1).withReduction(5.472),
+                    DCMotor.getKrakenX60(1).withReduction(1 / DRIVE_REDUCTION),
+                    DRIVE_MOTOR_CURRENT_LIMIT,
+                    1
+                ),
+                DRIVETRAIN_WHEELBASE_METERS
+            ), // The robot configuration
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-    //           var alliance = DriverStation.getAlliance();
-    //           if (alliance.isPresent()) {
-    //             return alliance.get() == DriverStation.Alliance.Red;
-    //           }
-    //           return false;
-    //         },
-    //         this // Reference to this subsystem to set requirements
-    //     );
-    // }
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+        );
+    }
 
     public void driveRelativeAutobuilder(ChassisSpeeds speeds) {
         SwerveRequest request = new SwerveRequest.RobotCentric()
