@@ -29,7 +29,6 @@ public class OdometryHelper extends SubsystemBase{
     private Pose2d robotPose;
     private Translation2d robotTranslation; //this translation is for calculating the distan
     private Field2d field;
-
 <<<<<<< HEAD:src/main/java/frc/robot/subsystems/Odometry.java
     private double distance;
     public double latency = LimelightHelpers.getLatency_Pipeline("") + LimelightHelpers.getLatency_Capture("");
