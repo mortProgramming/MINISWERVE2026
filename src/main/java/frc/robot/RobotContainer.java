@@ -10,6 +10,7 @@ import static frc.robot.subsystems.OdometryHelper.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +22,7 @@ import frc.robot.commands.SpinTurret;
 import frc.robot.configs.constants.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.OdometryHelper;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
@@ -38,9 +40,13 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
+    private final CommandXboxController operator = new CommandXboxController(1);
+
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    public final OdometryHelper odometry = OdometryHelper.getInstance();
+    public final Turret turret = Turret.getInstance();
+
+    public final OdometryHelper odometry = new OdometryHelper(drivetrain);
 
     public final Vision vision = Vision.getInstance();
 
@@ -54,9 +60,9 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX((-joystick.getLeftY()*0.5) * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY((-joystick.getLeftX()*0.5) * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate((-joystick.getRightX()*0.5) * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -67,10 +73,10 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
+        // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        // ));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -80,13 +86,18 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-        joystick.rightBumper().onTrue(drivetrain.runOnce(()-> drivetrain.addVisionMeasurement(vision.getRobotPosition(), 1)));
-
+        joystick.x().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        // joystick.rightBumper().onTrue(drivetrain.resetPose(drivetrain.runOnce(new Pose2d(0, 0, drivetrain.getState().Pose.getRotation()))));
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.a().onTrue(new SpinTurret(0.5));
-        joystick.b().onTrue(new SpinTurret(-0.5));
+        joystick.a().whileTrue(new SpinTurret(0.5));
+        joystick.b().whileTrue(new SpinTurret(-0.5));
+
+        joystick.leftStick().whileTrue(new SpinTurret(operator.getRightX(), operator));
+
+        // joystick.rightBumper().whileTrue(new SpinTurret(0.1));
+        // joystick.leftBumper().whileTrue(new SpinTurret(0.1));
+        
     }
 
     public Command getAutonomousCommand() {

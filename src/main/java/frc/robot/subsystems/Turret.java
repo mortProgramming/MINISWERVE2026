@@ -41,7 +41,7 @@ public class Turret extends SubsystemBase{
     private static Turret turret;
 
     public Turret(){
-        motor = new SparkMax(14,MotorType.kBrushless);
+        motor = new SparkMax(10,MotorType.kBrushless);
         
         config = new SparkMaxConfig();
         // config.closedLoop.p(KP).i(KI).d(KD).outputRange(kMinOutput, kMaxOutput); //figure out where to put kMinOutput and kMaxOutput and what vals should be

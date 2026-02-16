@@ -1,27 +1,32 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.RobotContainer;
+import frc.robot.configs.constants.TunerConstants;
 import frc.robot.subsystems.LimelightHelpers; // make sure this exists
 
-public class Odometry extends SubsystemBase {
+public class OdometryHelper extends SubsystemBase {
 
     private final CommandSwerveDrivetrain drivetrain;
     private final Field2d field;
+    
+    private static OdometryHelper instance;
 
     // Example target (speaker, hub, etc.)
     private final Translation2d target = new Translation2d(16.5, 5.5); // change for your field
 
-    public Odometry(CommandSwerveDrivetrain drivetrain) {
+    public OdometryHelper(CommandSwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
         this.field = new Field2d();
-
+        
         SmartDashboard.putData("Field", field);
+        // field.setRobotPose(new Pose2d(0,0, new Rotation2d()));
     }
 
     @Override
@@ -34,15 +39,20 @@ public class Odometry extends SubsystemBase {
         SmartDashboard.putNumber("Robot Y", robotPose.getY());
 
         field.setRobotPose(robotPose);
+        
 
         double distance = getDistanceToTarget();
         SmartDashboard.putNumber("Distance To Target", distance);
+        
+        
     }
 
     private void addVisionMeasurement() {
         // Get MegaTag2 estimate (BEST option)
-        LimelightHelpers.PoseEstimate estimate =
-            LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+        // LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(""); 
+        //megatag 1 method below is the megatag 2 equivalent
+
+        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
 
         if (estimate == null) return;
 
@@ -73,4 +83,5 @@ public class Odometry extends SubsystemBase {
     public Pose2d getPose() {
         return drivetrain.getState().Pose;
     }
+
 }
